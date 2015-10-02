@@ -4,7 +4,8 @@ from uuid import uuid4
 # Receive the pre_delete signal and delete the file associated with the model instance.
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
-from makematter_server.settings import MEDIA_OUT
+
+
 
 
 class Object(models.Model):
