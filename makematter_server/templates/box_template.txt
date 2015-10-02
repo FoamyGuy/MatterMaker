@@ -1,0 +1,39 @@
+module box(length, width, thickness){
+    difference(){
+        cube([length, width, thickness]);
+        translate([1, 1, 1]){
+            cube([length - 2, width - 2, thickness]);
+        }
+    }
+}
+
+module lid(length, width, thickness){
+    difference(){
+    box(length, width, thickness);
+        translate([12,3,-.01]){
+            mirror([1,0,0]){
+                rotate([0,0,90]){
+                    /*linear_extrude(height=.4){
+                        text("S S S", size=15);
+                    }*/
+                }
+            }
+        }
+    }
+}
+
+{% if box %}
+box({{ length }}, {{ width }}, {{ thickness }});
+
+translate([2.5,0,10]){
+    rotate([90,0,0]){
+        linear_extrude(height=.6){
+            text("{{ text }}");
+        }
+    }
+}
+{% endif %}
+{% if lid %}
+translate([{{ length }} + 10, 0, 0])
+    lid({{ length }}, {{ width }}, 5);
+{% endif %}

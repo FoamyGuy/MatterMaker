@@ -1,0 +1,171 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="{% static "css/foundation.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/style.css" %}"/>
+</head>
+<body>
+
+<div class="header row">
+    <div class="large-3 columns">
+        <h2>MakeMatter</h2>
+    </div>
+    <div class="large-9 columns">
+        <ul class="inline-list right">
+
+            <li><a id="scad-btn" class="header-btn small button" href="#">Download OpenSCAD</a></li>
+            <li><a id="stl-btn" class="header-btn small button" href="#">Download STL</a></li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="row">
+
+
+    <div id="canvas-container" class="large-9 push-3 columns">
+
+        <h3>Page Title
+            <small>Page subtitle</small>
+        </h3>
+
+        <canvas id="cv" style="border: 1px solid;" width="735" height="338"></canvas>
+        <div class="row" style="position: relative;">
+            <div class="large-2 columns">
+                <label for="length_in">x:</label>
+                <input id="length_in" type="text" value=""/>
+            </div>
+            <div class="large-2 columns">
+                <label for="width_in">y:</label>
+                <input id="width_in" type="text" value=""/>
+            </div>
+            <div class="large-2 columns">
+                <label for="thickness_in">z:</label>
+                <input id="thickness_in" type="text" value=""/>
+            </div>
+            <div class="large-2 columns">
+                <label for="lid_in">lid:</label>
+                <input id="lid_in" type="checkbox" value=""/>
+            </div>
+            <div class="large-2 columns">
+                <label for="box_in">box:</label>
+                <input id="box_in" type="checkbox" value=""/>
+            </div>
+            <input class="small button" type="button" onclick="refresh();" value="Refresh"
+                   style="height: 100%; top: 12px;"/>
+        </div>
+
+
+    </div>
+
+
+    <div class="sidebar large-3 pull-9 columns">
+
+        <ul class="side-nav">
+            <li><a href="#">Section 1</a></li>
+            <li><a href="#">Section 2</a></li>
+            <li><a href="#">Section 3</a></li>
+            <li><a href="#">Section 4</a></li>
+            <li><a href="#">Section 5</a></li>
+            <li><a href="#">Section 6</a></li>
+        </ul>
+
+        <p><img src="http://placehold.it/320x240&text=Not An Ad"/></p>
+
+    </div>
+
+</div>
+
+
+<footer class="row">
+    <div class="large-12 columns">
+        <hr/>
+        <div class="row">
+            <div class="large-6 columns">
+                <p>© Copyright no one at all. Go to town.</p>
+            </div>
+            <div class="large-6 columns">
+                <ul class="inline-list right">
+                    <!--<li><a href="#">Section 1</a></li>
+                    <li><a href="#">Section 2</a></li>
+                    <li><a href="#">Section 3</a></li>
+                    <li><a href="#">Section 4</a></li>-->
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script type="text/javascript" src="{% static "js/vendor/jquery.js" %}"></script>
+<script type="text/javascript" src="{% static "js/jsc3d.js" %}"></script>
+<script type="text/javascript" src="{% static "js/jsc3d.webgl.js" %}"></script>
+<script type="text/javascript" src="{% static "js/jsc3d.touch.js" %}"></script>
+<script type="text/javascript">
+    var obj_uuid = "";
+    var canvas = document.getElementById('cv');
+    var viewer = new JSC3D.Viewer(canvas);
+    var d = Date.now();
+
+    viewer.setParameter('SceneUrl', 'media/out/out.stl?time=' + d);
+    viewer.setParameter('InitRotationX', -20);
+    viewer.setParameter('InitRotationY', 45);
+    viewer.setParameter('InitRotationZ', 70);
+    viewer.setParameter('ModelColor', '#CAA618');
+    viewer.setParameter('BackgroundColor1', '#EEEEEE');
+    viewer.setParameter('BackgroundColor2', '#999999');
+    viewer.setParameter('RenderMode', 'textureflat');
+    viewer.setParameter('MipMapping', 'on');
+    viewer.setParameter('Renderer', 'webgl');
+    viewer.init();
+    viewer.update();
+
+    function refresh() {
+
+        var l = $('#length_in').val();
+        var w = $('#width_in').val();
+        var t = $('#thickness_in').val();
+        var lid = $('#lid_in').prop('checked');
+        var box = $('#box_in').prop('checked');
+
+        if (!lid && !box){
+            box = true;
+        }
+
+        var url = "/make_box?l=" + l + "&w=" + w + "&t=" + t + "&box=" + box + "&lid=" + lid;
+
+        if (obj_uuid != ""){
+            url += "&key=" + obj_uuid
+        }
+
+        console.log(url);
+
+        $.get(url, function (data) {
+            console.log(data);
+            viewer.replaceSceneFromUrl(data);
+            viewer.update();
+
+            $("#stl-btn").attr("href", data);
+            $("#scad-btn").attr("href", data.replace(".stl", ".scad"));
+
+            obj_uuid = data.replace("/media/out/", "").replace(".stl", "");
+            console.log(obj_uuid)
+
+
+        });
+        d = Date.now();
+        //viewer.replaceSceneFromUrl('static/output_files/out.stl?time=' + d);
+
+    }
+</script>
+
+<script src="{% static "js/foundation.min.js" %}"></script>
+<script>
+    $(document).foundation();
+
+</script>
+</body>
+</html>
