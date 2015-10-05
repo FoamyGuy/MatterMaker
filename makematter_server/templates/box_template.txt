@@ -23,7 +23,7 @@ module lid(length, width, thickness){
 }
 
 {% if box %}
-box({{ length }}, {{ width }}, {{ thickness }});
+box({{ x }}, {{ y }}, {{ z }});
 
 translate([2.5,0,10]){
     rotate([90,0,0]){
@@ -34,6 +34,6 @@ translate([2.5,0,10]){
 }
 {% endif %}
 {% if lid %}
-translate([{{ length }} + 10, 0, 0])
-    lid({{ length }}, {{ width }}, 5);
+translate([{{ x }} + 10, 0, 0])
+    lid({{ x }}, {{ y }}, 5);
 {% endif %}

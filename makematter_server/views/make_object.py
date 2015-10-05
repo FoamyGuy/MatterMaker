@@ -1,3 +1,7 @@
+from django.http import HttpResponse
+import time
+from makematter_server.models import MatterTemplate
+
 import os
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files import File
@@ -9,17 +13,9 @@ from makematter_server.models import MatterObject, MatterTemplate, MatterTemplat
 from makematter_server.settings import MEDIA_ROOT, WORKING_DIR
 
 
+def render_matter_template(request, uuid):
+    template = MatterTemplate.objects.get(uuid=uuid)
 
-
-def make_box(request):
-    """
-    l = request.GET.get('l')
-    w = request.GET.get('w')
-    t = request.GET.get('t')
-
-    lid = request.GET.get('lid') == "true"
-    box = request.GET.get('box') == "true"
-    """
 
     key = request.GET.get('key')
     print(key)
@@ -33,10 +29,6 @@ def make_box(request):
         text = request.GET.get("text")
     else:
         text = ""
-
-    #print(obj.uuid)
-
-    template = MatterTemplate.objects.get(name="Basic Box")
 
     box_template_code = template.template_str
 
@@ -58,16 +50,6 @@ def make_box(request):
 
     scad_str = box_template.render(ctx)
 
-    """
-    scad_str = render_to_string(box_template,
-                               {'length':l,
-                                'width':w,
-                                'thickness':t,
-                                'text':text,
-                                'box': box,
-                                'lid': lid})
-
-    """
 
     f = open(os.path.join(WORKING_DIR, '%s.scad' % obj.uuid), 'w+')
     f.write(scad_str)
@@ -93,6 +75,16 @@ def make_box(request):
     os_cmd_str = "openscad -o %s %s" % (os.path.join(WORKING_DIR, '%s.stl' % obj.uuid), os.path.join(WORKING_DIR, '%s.scad' % obj.uuid))
 
     os.system(os_cmd_str)
+    file_is_ready = False
+    while not file_is_ready:
+        try:
+            tmp_f = open(os.path.join(WORKING_DIR, '%s.stl' % obj.uuid), 'rb')
+            tmp_f.close()
+            file_is_ready = True
+        except IOError:
+            # Not Ready yet, try again in a sec
+            time.sleep(.1)
+            pass
 
     f = open(os.path.join(WORKING_DIR, '%s.stl' % obj.uuid), 'rb')
 
@@ -108,8 +100,12 @@ def make_box(request):
     obj.save()
     f.close()
     obj.stl_file.close()
+
     stl_url = obj.stl_file.url
-    os.remove(os.path.join(WORKING_DIR, '%s.stl' % obj.uuid))
+    time.sleep(.5)
+
     os.remove(os.path.join(WORKING_DIR, '%s.scad' % obj.uuid))
+    os.remove(os.path.join(WORKING_DIR, '%s.stl' % obj.uuid))
     print stl_url
     return HttpResponse(stl_url)
+

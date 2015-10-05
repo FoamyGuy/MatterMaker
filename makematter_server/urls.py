@@ -9,5 +9,15 @@ admin.autodiscover()
 urlpatterns = patterns(
         '',
         url(r'^$', 'makematter_server.views.index', name='index'),
+        #url(r'^mtv/$', 'makematter_server.views.show_matter_template', name='mtv'),
+
+        url(r'^render_matter_template/(?P<uuid>[0-Fa-f]{8}-[0-Fa-f]{4}-[0-Fa-f]{4}-[0-Fa-f]{4}-[0-Fa-f]{12})/$',
+            'makematter_server.views.make_object.render_matter_template', name='RenderMatterTemplate'),
+
+        url(r'^show_matter_template/(?P<uuid>[0-Fa-f]{8}-[0-Fa-f]{4}-[0-Fa-f]{4}-[0-Fa-f]{4}-[0-Fa-f]{12})/$',
+            'makematter_server.views.show_matter_template', name='ShowMatterTemplate'),
+
+
+
         url(r'^make_box/', 'makematter_server.views.make_box', name='make_box'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

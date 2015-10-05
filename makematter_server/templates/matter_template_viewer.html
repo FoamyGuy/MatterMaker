@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="{% static "css/style.css" %}"/>
 </head>
 <body>
-<a href="https://github.com/FoamyGuy/MatterMaker"><img style="position: absolute; top: 0; right: 0; border: 0;" src="{% static 'img/github_ribbon.png' %}"></a>
+<a href="https://github.com/FoamyGuy/MatterMaker"><img style="position: absolute; top: 0; right: 0; border: 0;"
+                                                       src="{% static 'img/github_ribbon.png' %}"></a>
 
 <div class="header row">
     <div class="large-3 columns">
@@ -29,39 +30,31 @@
 
     <div id="canvas-container" class="large-9 push-3 columns">
 
-        <h3>Box Template
+        <h3>{{ matter_template.name }}
             <small></small>
         </h3>
 
         <canvas id="cv" style="border: 1px solid;" width="735" height="338"></canvas>
         <div class="row" style="position: relative;">
-            <div class="large-2 columns">
-                <label for="length_in">x:</label>
-                <input id="length_in" type="text" value=""/>
-            </div>
-            <div class="large-2 columns">
-                <label for="width_in">y:</label>
-                <input id="width_in" type="text" value=""/>
-            </div>
-            <div class="large-2 columns">
-                <label for="thickness_in">z:</label>
-                <input id="thickness_in" type="text" value=""/>
-            </div>
-            <div class="large-2 columns">
-                <label for="lid_in">lid:</label>
-                <input id="lid_in" type="checkbox" value=""/>
-            </div>
-            <div class="large-2 columns">
-                <label for="box_in">box:</label>
-                <input id="box_in" type="checkbox" value=""/>
-            </div>
+
+            {% for template_var in matter_template_vars %}
+                {% if template_var.type == "str" or template_var.type == "int" %}
+                    <div class="large-2 columns">
+                        <label for="{{ template_var.name }}_in">{{ template_var.name }}:</label>
+                        <input id="{{ template_var.name }}_in" type="text" value=""/>
+                    </div>
+                {% elif template_var.type == "bool" %}
+                    <div class="large-2 columns">
+                        <label for="{{ template_var.name }}_in">{{ template_var.name }}:</label>
+                        <input id="{{ template_var.name }}_in" type="checkbox" value=""/>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
             <input class="small button" type="button" onclick="refresh();" value="Refresh"
                    style="height: 100%; top: 12px;"/>
         </div>
-
-
     </div>
-
 
     <div class="sidebar large-3 pull-9 columns">
 
@@ -126,19 +119,21 @@
 
     function refresh() {
 
-        var l = $('#length_in').val();
-        var w = $('#width_in').val();
-        var t = $('#thickness_in').val();
-        var lid = $('#lid_in').prop('checked');
-        var box = $('#box_in').prop('checked');
+        {% for template_var in matter_template_vars %}
+            {% if template_var.type == "int" or template_var.type == "str" %}
+                var {{ template_var.name }} = $('#{{ template_var.name }}_in').val();
+            {% elif template_var.type = "bool" %}
+                var {{ template_var.name }} = $('#{{ template_var.name }}_in').prop('checked');
+            {% endif %}
+        {% endfor %}
 
-        if (!lid && !box){
-            box = true;
-        }
+        var url = "/render_matter_template/{{ matter_template.uuid }}/?";
 
-        var url = "/make_box?x=" + l + "&y=" + w + "&z=" + t + "&box=" + box + "&lid=" + lid;
+        {% for template_var in matter_template_vars %}
+            url += "{{ template_var.name }}=" + {{ template_var.name }} + "&";
+        {% endfor %}
 
-        if (obj_uuid != ""){
+        if (obj_uuid != "") {
             url += "&key=" + obj_uuid
         }
 
@@ -154,12 +149,8 @@
 
             obj_uuid = data.replace("/media/out/", "").replace(".stl", "");
             console.log(obj_uuid)
-
-
         });
         d = Date.now();
-        //viewer.replaceSceneFromUrl('static/output_files/out.stl?time=' + d);
-
     }
 </script>
 
