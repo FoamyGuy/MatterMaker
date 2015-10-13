@@ -22,11 +22,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '+h26yd(@t$&$l(1%b&vp5)#!00cw)@kk36#81#bu7aaw(a^qat'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['makematter.xyz', '*.makematter.xyz']
 
 
 # Application definition

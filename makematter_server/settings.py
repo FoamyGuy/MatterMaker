@@ -1,5 +1,5 @@
 import os
-from MakeMatter.settings import BASE_DIR
+
 
 APP_ROOT = os.path.dirname(__file__)
 
