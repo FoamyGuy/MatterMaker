@@ -10,7 +10,7 @@ from django.template import Template, Context
 
 from django.template.loader import render_to_string
 from makematter_server.models import MatterObject, MatterTemplate, MatterTemplateVar
-from makematter_server.settings import MEDIA_ROOT, WORKING_DIR
+from makematter_server.app_settings import MEDIA_ROOT, WORKING_DIR
 
 
 def render_matter_template(request, uuid):

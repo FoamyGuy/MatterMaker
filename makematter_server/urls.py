@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url, include
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.conf.urls.static import static
-from makematter_server import settings
+from makematter_server import app_settings
 
 admin.autodiscover()
 
@@ -20,4 +20,4 @@ urlpatterns = patterns(
 
 
         url(r'^make_box/', 'makematter_server.views.make_box', name='make_box'),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+) + static(app_settings.MEDIA_URL, document_root=app_settings.MEDIA_ROOT)
