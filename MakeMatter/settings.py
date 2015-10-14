@@ -25,8 +25,8 @@ SECRET_KEY = '+h26yd(@t$&$l(1%b&vp5)#!00cw)@kk36#81#bu7aaw(a^qat'
 DEBUG = False
 
 TEMPLATE_DEBUG = False
-
-ALLOWED_HOSTS = ['makematter.xyz', 'www.makematter.xyz']
+#http://makematter.xyz/
+ALLOWED_HOSTS = ['.makematter.xyz']
 
 
 # Application definition
