@@ -26,7 +26,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ['makematter.xyz', '*.makematter.xyz']
+ALLOWED_HOSTS = ['makematter.xyz', 'www.makematter.xyz']
 
 
 # Application definition
