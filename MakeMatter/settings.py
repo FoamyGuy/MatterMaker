@@ -26,7 +26,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 #http://makematter.xyz/
-ALLOWED_HOSTS = ['.makematter.xyz']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
